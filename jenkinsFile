@@ -1,0 +1,36 @@
+pipeline{
+    agent
+    {
+        any
+    }
+    environment {
+        VERSION = "${env.BUILD_ID}"
+        
+    }
+    
+    stages{
+        stage('Build'){
+            steps{
+                sh 'mvn clean package'
+            }
+        }
+        stage('sonar quality check'){
+            steps{
+                script{
+                    withSonarQubeEnv('sonar_server') {
+                         sh "mvn sonar:sonar"
+                    }
+                    timeout(5) {
+                        def qg = waitForQualityGate()
+                        print "Finished waiting"
+                        if(qg.status!='OK')
+                        {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
