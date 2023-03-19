@@ -1,0 +1,39 @@
+---
+
+- hosts: kube-master
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: get join command
+      shell: kubeadm token create --print-join-command
+      register: join_command_raw
+
+      
+    - name: print join_command_raw
+      ansible.builtin.debug:
+        msg:
+#         -  "{{ join_command_raw }}"
+          -  "{{ join_command_raw.stdout_lines[0] }}"
+            
+
+    - name: set join command
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+
+- hosts: workers
+  become: yes
+  tasks:
+
+    - name: print join_command fetched from kube-master
+      ansible.builtin.debug:
+        msg:
+          -  "{{ hostvars['kube-master'].join_command }}"
+      
+    - name: join cluster
+      shell: "{{ hostvars['kube-master'].join_command }} --ignore-preflight-errors all  >> node_joined.txt"
+      args:
+         chdir: $HOME
+         creates: node_joined.txt
+
+          

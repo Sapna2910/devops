@@ -1,0 +1,76 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Disable SWAP
+      shell: |
+        swapoff -a
+    - name: Disable SWAP in fstab
+      lineinfile:
+        path: /etc/fstab
+        regexp: swap
+        state: absent
+    - name: ensure repository key is installed
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+    - name: install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: true
+    - name: ensure docker registry is available
+      apt_repository:  repo='deb https://download.docker.com/linux/ubuntu bionic stable' state=present
+
+    - name: ensure docker and dependencies are installed
+      apt: name=docker update_cache=yes
+    - service: name=docker state=restarted
+
+    - name: disable SELinux
+      command: setenforce 0
+      ignore_errors: yes
+
+    - name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+      sysctl:
+        name: net.bridge.bridge-nf-call-ip6tables
+        value: 1
+        state: present
+
+    - name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+      sysctl:
+        name: net.bridge.bridge-nf-call-iptables
+        value: 1
+        state: present
+
+    - name: Add Google official GPG key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Add Kubernetes Repository
+      apt_repository:
+        repo: deb http://apt.kubernetes.io/ kubernetes-xenial main 
+        state: present
+        filename: kubernetes
+        mode: 0600
+
+    - name: Installing Kubernetes Cluster Packages.
+      apt: 
+        name:
+          - kubeadm=1.25.5-00 
+          - kubectl
+          - kubelet=1.25.5-00
+        state: present        
+  
+    - name: Enable service kubelet, and enable persistently
+      service: 
+        name: kubelet
+        enabled: yes
+
+    - name: Reboot all the kubernetes nodes.
+      reboot:
+        post_reboot_delay: 10
+        reboot_timeout: 40
+        connect_timeout: 60
+        test_command: uptime
+

@@ -1,0 +1,12 @@
+- hosts: workers
+  become: true
+  tasks:
+    - name: reset kubeadm and docker
+      shell: |
+        kubeadm reset --force
+        systemctl enable docker
+        systemctl enable kubelet
+        systemctl daemon-reload
+        systemctl restart docker
+
+
