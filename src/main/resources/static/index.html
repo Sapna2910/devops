@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+<h1>Save Employee using form Data</h1>
+
+<form action="/springboot-crud-rest/api/v1/saveThroughForm" method = "post">
+  <label for="firstName">First name:</label>
+  <input type="text" id="firstName" name="firstName"><br><br>
+  <label for="lastName">Last name:</label>
+  <input type="text" id="lastName" name="lastName"><br><br>
+  <label for="emailId">Email Id:</label>
+  <input type="text" id="emailId" name="emailId"><br><br>
+  <label for="department">Department:</label>
+  <input type="text" id="department" name="department"><br><br>
+  <input type="submit" value="Submit">
+</form>
+
+<p>Click the "Submit" button and the form-data will be sent to a page on the 
+server called "action_page".</p>
+
+</body>
+</html>
