@@ -14,6 +14,9 @@ pipeline{
             }
         }
         stage('sonar quality check'){
+              tools {
+                  maven '3.6.3'
+              }                
             steps{
                 script{
                     withSonarQubeEnv('sonar_server') {
