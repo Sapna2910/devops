@@ -37,7 +37,7 @@ pipeline{
         {
             steps{
                 script{
-                    withCredentials([string(credentialsId: 'nexus_pass', variable: 'nexus_password')]) {
+                    withCredentials([usernameColonPassword(credentialsId: 'nexus_pass', variable: 'nexus_password')]) {
                         sh '''
                         docker build -t 34.125.36.39:8083/${JOB_NAME}:${VERSION} .
                         docker login -u admin -p ${nexus_password} http://34.125.36.39:8083/
