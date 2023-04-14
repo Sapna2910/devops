@@ -2,7 +2,7 @@ pipeline{
     agent any
     environment {
         VERSION = "${env.BUILD_ID}"
-        nexus_ip = 34.125.116.255
+        nexus_ip = "34.125.116.255"
     }
     
     stages{
