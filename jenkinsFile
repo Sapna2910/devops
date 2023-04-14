@@ -1,7 +1,8 @@
 pipeline{
     agent any
     environment {
-        VERSION = "${env.BUILD_ID}"        
+        VERSION = "${env.BUILD_ID}"
+        nexus_ip = 34.125.116.255
     }
     
     stages{
@@ -40,9 +41,9 @@ pipeline{
                     withCredentials([usernameColonPassword(credentialsId: 'nexus_pass', variable: 'nexus_password')]) {
                         sh '''
                         docker login -u admin -p ${nexus_password} http://34.125.36.39:8083/
-                        docker build -t 34.125.36.39:8083/${JOB_NAME}:${VERSION} .              
-                        docker push 34.125.36.39:8083/${JOB_NAME}:${VERSION}
-                        docker rmi 34.125.36.39:8083/${JOB_NAME}:${VERSION}
+                        docker build -t ${nexus_ip}:8083/${JOB_NAME}:${VERSION} .              
+                        docker push ${nexus_ip}:8083/${JOB_NAME}:${VERSION}
+                        docker rmi ${nexus_ip}:8083/${JOB_NAME}:${VERSION}
                         '''
                     }
                 }
