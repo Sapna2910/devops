@@ -41,8 +41,8 @@ pipeline{
                     //withCredentials([usernameColonPassword(credentialsId: 'nexus_pass', variable: 'nexus_password')]) {
                     withCredentials([string(credentialsId: 'nexus_pass', variable: 'nexus_password')]) {
                         sh '''                     
-                        docker build -t ${nexus_ip}:8083/${JOB_NAME}:${VERSION} .              
                         docker login -u admin -p ${nexus_password} http://${nexus_ip}:8083/
+                        docker build -t ${nexus_ip}:8083/${JOB_NAME}:${VERSION} .                                      
                         docker push ${nexus_ip}:8083/${JOB_NAME}:${VERSION}
                         docker rmi ${nexus_ip}:8083/${JOB_NAME}:${VERSION}
                         '''
