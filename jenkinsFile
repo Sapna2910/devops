@@ -42,7 +42,7 @@ pipeline{
                     withCredentials([string(credentialsId: 'nexus_pass', variable: 'nexus_password')]) {
                         sh ''' 
                         docker login -u admin -p ${nexus_password} http://${nexus_ip}:8083/
-                        docker build -f "/var/lib/jenkins/workspace/test-pipeline/DockerFile"-t ${nexus_ip}:8083/${JOB_NAME}:${VERSION} .                                      
+                        docker build -f "/var/lib/jenkins/workspace/test-pipeline/DockerFile" -t ${nexus_ip}:8083/${JOB_NAME}:${VERSION} .                                      
                         docker push ${nexus_ip/var/lib/jenkins/workspace/test-pipeline}:8083/${JOB_NAME}:${VERSION}
                         docker rmi ${nexus_ip}:8083/${JOB_NAME}:${VERSION}
                         '''
